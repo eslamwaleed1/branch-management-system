@@ -1,0 +1,12 @@
+[
+    {
+        "email": "vp@company.com",
+        "password": "12345678Aa#",
+        "type": "vp"
+    },
+    {
+        "email": "salesman@company.com",
+        "password": "12345678Aa#",
+        "type": "salesman"
+    }
+]

@@ -1,0 +1,20 @@
+[
+    {
+        "id": 1,
+        "name": "Jim Halpert",
+        "jobTitle": "Senior Paper Salesman",
+        "img": {
+            "src": "/src/assets/images/employees_photographs/jim_halpert.jpg",
+            "alt": "employee photograph"
+        }
+    },
+    {
+        "id": 2,
+        "name": "Michael Scott",
+        "jobTitle": "Regional Manager",
+        "img": {
+            "src": "/src/assets/images/employees_photographs/michael_scott.jpg",
+            "alt": "employee photograph"
+        }
+    }
+]

@@ -1,0 +1,42 @@
+[
+	{
+		"id": 1,
+		"title": "Scranton",
+		"location": "Pennsylvania, PN",
+		"revenue": "$2.4M",
+		"growth": 15.3,
+		"employees": 21,
+		"orders": 8420,
+		"rank": 1
+	},
+	{
+		"id": 2,
+		"title": "Stamford",
+		"location": "Connecticut, CN",
+		"revenue": "$2.41M",
+		"growth": 16.3,
+		"employees": 30,
+		"orders": 7620,
+		"rank": 2
+	},
+	{
+		"id": 3,
+		"title": "Camden",
+		"location": "Minnesota, MN",
+		"revenue": "$1.4M",
+		"growth": 20.3,
+		"employees": 45,
+		"orders": 5420,
+		"rank": 3
+	},
+	{
+		"id": 4,
+		"title": "Utica",
+		"location": "New York, NY",
+		"revenue": "$3.4M",
+		"growth": 19.3,
+		"employees": 45,
+		"orders": 8420,
+		"rank": 4
+	}
+]
