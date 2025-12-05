@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import Users from "../assets/users.json";
 
-export default function SignUpPage() {
+export default function SignupPage() {
 	const navigate = useNavigate();
 
 	const [name, setName] = useState("");
