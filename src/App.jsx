@@ -1,15 +1,15 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
-import WelcomePage from "./pages/WelcomePage";
-import LoginPage from "./pages/LoginPage";
-import SignupPage from "./pages/SignupPage";
-import MainPage from "./pages/MainPage";
-import SalesmanPage from "./pages/SalesmanPage";
-import StockPage from "./pages/StockPage";
-import SalesPage from "./pages/SalesPage";
-import EmployeesPage from "./pages/EmployeesPage";
-import BranchPage from "./pages/BranchPage"
-import UserProfilePage from "./pages/UserProfilePage";
-import SettingsPage from "./pages/SettingsPage";
+import WelcomePage from "./pages/WelcomePage.jsx";
+import LoginPage from "./pages/LoginPage.jsx";
+import SignupPage from "./pages/SignupPage.jsx";
+import MainPage from "./pages/MainPage.jsx";
+import SalesmanPage from "./pages/SalesmanPage.jsx";
+import StockPage from "./pages/StockPage.jsx";
+import SalesPage from "./pages/SalesPage.jsx";
+import EmployeesPage from "./pages/EmployeesPage.jsx";
+import BranchPage from "./pages/BranchPage.jsx"
+import UserProfilePage from "./pages/UserProfilePage.jsx";
+import SettingsPage from "./pages/SettingsPage.jsx";
 
 
 function App() {
