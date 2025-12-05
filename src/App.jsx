@@ -1,15 +1,15 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
-import WelcomePage from "./pages/WelcomePage.jsx";
+import BranchPage from "./pages/BranchPage.jsx"
+import EmployeesPage from "./pages/EmployeesPage.jsx";
 import LoginPage from "./pages/LoginPage.jsx";
-import SignupPage from "./pages/SignupPage.jsx";
 import MainPage from "./pages/MainPage.jsx";
 import SalesmanPage from "./pages/SalesmanPage.jsx";
-import StockPage from "./pages/StockPage.jsx";
 import SalesPage from "./pages/SalesPage.jsx";
-import EmployeesPage from "./pages/EmployeesPage.jsx";
-import BranchPage from "./pages/BranchPage.jsx"
-import UserProfilePage from "./pages/UserProfilePage.jsx";
 import SettingsPage from "./pages/SettingsPage.jsx";
+import SignUpPage from "./pages/SignUpPage.jsx";
+import StockPage from "./pages/StockPage.jsx";
+import UserProfilePage from "./pages/UserProfilePage.jsx";
+import WelcomePage from "./pages/WelcomePage.jsx";
 
 
 function App() {
@@ -18,7 +18,7 @@ function App() {
 			<Routes>
 				<Route path="/" element={<WelcomePage />} />
 				<Route path="/login" element={<LoginPage />} />
-				<Route path="/signup" element={<SignupPage />} />
+				<Route path="/signup" element={<SignUpPage />} />
 				<Route path="/main" element={<MainPage />} />
 				<Route path="/salesman" element={<SalesmanPage />} />
 				<Route path="branch/:branchId" element={<BranchPage />}/>
