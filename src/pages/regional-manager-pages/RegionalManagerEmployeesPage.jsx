@@ -6,9 +6,11 @@ import {
 	filterByBranch,
 	useBusinessData,
 } from "../../hooks/useBusinessData.js";
+import { useDeleteBusinessData } from "../../hooks/useBusinessMutation.js";
 
 export default function RegionalManagerEmployeesPage({ branchId }) {
 	const { data: employees, loading, error } = useBusinessData("employees");
+	const deleteEmployeeMutation = useDeleteBusinessData("employees");
 	const [query, setQuery] = useState("");
 	const [deletedIds, setDeletedIds] = useState([]);
 	const [actionError, setActionError] = useState("");
@@ -26,12 +28,9 @@ export default function RegionalManagerEmployeesPage({ branchId }) {
 	const deleteEmployee = async (employee) => {
 		if (!window.confirm(`Delete ${employee.name}? This cannot be undone.`))
 			return;
+		setActionError("");
 		try {
-			const response = await fetch(
-				`http://localhost:5000/api/employees/${employee._id}`,
-				{ method: "DELETE" },
-			);
-			if (!response.ok) throw new Error("Unable to delete this employee.");
+			await deleteEmployeeMutation.mutateAsync(employee._id);
 			setDeletedIds((ids) => [...ids, employee._id]);
 		} catch (requestError) {
 			setActionError(requestError.message);

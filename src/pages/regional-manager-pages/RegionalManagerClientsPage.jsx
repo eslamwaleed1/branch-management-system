@@ -6,9 +6,11 @@ import {
 	filterByBranch,
 	useBusinessData,
 } from "../../hooks/useBusinessData.js";
+import { useDeleteBusinessData } from "../../hooks/useBusinessMutation.js";
 
 export default function RegionalManagerClientsPage({ branchId }) {
 	const { data: clients, loading, error } = useBusinessData("clients");
+	const deleteClientMutation = useDeleteBusinessData("clients");
 	const [query, setQuery] = useState("");
 	const [deletedIds, setDeletedIds] = useState([]);
 	const [actionError, setActionError] = useState("");
@@ -26,12 +28,9 @@ export default function RegionalManagerClientsPage({ branchId }) {
 	const deleteClient = async (client) => {
 		if (!window.confirm(`Delete ${client.name}? This cannot be undone.`))
 			return;
+		setActionError("");
 		try {
-			const response = await fetch(
-				`http://localhost:5000/api/clients/${client._id}`,
-				{ method: "DELETE" },
-			);
-			if (!response.ok) throw new Error("Unable to delete this client.");
+			await deleteClientMutation.mutateAsync(client._id);
 			setDeletedIds((ids) => [...ids, client._id]);
 		} catch (requestError) {
 			setActionError(requestError.message);

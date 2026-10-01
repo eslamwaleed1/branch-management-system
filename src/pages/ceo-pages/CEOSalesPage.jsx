@@ -6,10 +6,12 @@ import {
 	useBusinessData,
 } from "../../hooks/useBusinessData.js";
 import AddEntityLink from "../../components/entity-components/AddEntityLink.jsx";
+import { useDeleteBusinessData } from "../../hooks/useBusinessMutation.js";
 
 export default function CEOSalesPage({ branchId }) {
 	const { data: sales, loading, error } = useBusinessData("sales");
 	const { data: branches } = useBusinessData("branches");
+	const deleteSaleMutation = useDeleteBusinessData("sales");
 	const [sort, setSort] = useState("date");
 	const [selectedBranchId, setSelectedBranchId] = useState(branchId || "");
 	const [deletedIds, setDeletedIds] = useState([]);
@@ -31,11 +33,7 @@ export default function CEOSalesPage({ branchId }) {
 		if (!window.confirm("Delete this sale? This cannot be undone.")) return;
 		setActionError("");
 		try {
-			const response = await fetch(
-				`http://localhost:5000/api/sales/${sale._id}`,
-				{ method: "DELETE" },
-			);
-			if (!response.ok) throw new Error("Unable to delete this sale.");
+			await deleteSaleMutation.mutateAsync(sale._id);
 			setDeletedIds((ids) => [...ids, sale._id]);
 		} catch (requestError) {
 			setActionError(requestError.message);

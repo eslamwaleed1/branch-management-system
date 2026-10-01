@@ -8,6 +8,10 @@ import EmployeeKanban from "../../components/entity-components/employee-componen
 import EmployeeViewModal from "../../components/entity-components/employee-components/EmployeeViewModal.jsx";
 import EmployeeEditModal from "../../components/entity-components/employee-components/EmployeeEditModal.jsx";
 import {
+	useDeleteBusinessData,
+	useUpdateBusinessData,
+} from "../../hooks/useBusinessMutation.js";
+import {
 	filterByBranch,
 	useBusinessData,
 } from "../../hooks/useBusinessData.js";
@@ -15,6 +19,8 @@ import {
 export default function CEOEmployeesPage({ branchId }) {
 	const { data: employees, loading, error } = useBusinessData("employees");
 	const { data: branches } = useBusinessData("branches");
+	const deleteEmployeeMutation = useDeleteBusinessData("employees");
+	const updateEmployeeMutation = useUpdateBusinessData("employees");
 	const [query, setQuery] = useState("");
 	const [selectedBranchId, setSelectedBranchId] = useState(branchId || "");
 	const [deletedIds, setDeletedIds] = useState([]);
@@ -45,11 +51,7 @@ export default function CEOEmployeesPage({ branchId }) {
 			return;
 		setActionError("");
 		try {
-			const response = await fetch(
-				`http://localhost:5000/api/employees/${employee._id}`,
-				{ method: "DELETE" },
-			);
-			if (!response.ok) throw new Error("Unable to delete this employee.");
+			await deleteEmployeeMutation.mutateAsync(employee._id);
 			setDeletedIds((ids) => [...ids, employee._id]);
 		} catch (requestError) {
 			setActionError(requestError.message);
@@ -67,16 +69,12 @@ export default function CEOEmployeesPage({ branchId }) {
 		});
 	};
 	const updateEmployee = async (employeeId, nextEmployee) => {
+		setActionError("");
 		try {
-			const response = await fetch(
-				`http://localhost:5000/api/employees/${employeeId}`,
-				{
-					method: "PUT",
-					headers: { "Content-Type": "application/json" },
-					body: JSON.stringify(nextEmployee),
-				},
-			);
-			if (!response.ok) throw new Error("Unable to update this employee.");
+			await updateEmployeeMutation.mutateAsync({
+				id: employeeId,
+				payload: nextEmployee,
+			});
 			setEditingEmployee(null);
 		} catch (requestError) {
 			setActionError(requestError.message);

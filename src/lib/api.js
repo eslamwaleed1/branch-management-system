@@ -6,6 +6,7 @@ export async function apiFetch(path, options) {
 		const payload = await response.json().catch(() => ({}));
 		throw new Error(payload.message || "Request failed");
 	}
+	if (response.status === 204) return null;
 	return response.json();
 }
 
@@ -15,6 +16,18 @@ export function createResource(resource, payload) {
 		headers: { "Content-Type": "application/json" },
 		body: JSON.stringify(payload),
 	});
+}
+
+export function updateResource(resource, id, payload) {
+	return apiFetch(`/${resource}/${id}`, {
+		method: "PUT",
+		headers: { "Content-Type": "application/json" },
+		body: JSON.stringify(payload),
+	});
+}
+
+export function deleteResource(resource, id) {
+	return apiFetch(`/${resource}/${id}`, { method: "DELETE" });
 }
 
 export const api = {

@@ -5,6 +5,7 @@ import {
 	filterByBranch,
 	useBusinessData,
 } from "../../hooks/useBusinessData.js";
+import { useDeleteBusinessData } from "../../hooks/useBusinessMutation.js";
 import AddEntityLink from "../../components/entity-components/AddEntityLink.jsx";
 import ToggleViewModeButtons from "../../components/entity-components/ToggleViewModeButtons.jsx";
 import ClientCard from "../../components/entity-components/client-components/ClientCard.jsx";
@@ -13,6 +14,7 @@ import ClientKanban from "../../components/entity-components/client-components/C
 export default function CEOClientsPage({ branchId }) {
 	const { data: clients, loading, error } = useBusinessData("clients");
 	const { data: branches } = useBusinessData("branches");
+	const deleteClientMutation = useDeleteBusinessData("clients");
 	const [query, setQuery] = useState("");
 	const [selectedBranchId, setSelectedBranchId] = useState(branchId || "");
 	const [deletedIds, setDeletedIds] = useState([]);
@@ -36,11 +38,7 @@ export default function CEOClientsPage({ branchId }) {
 			return;
 		setActionError("");
 		try {
-			const response = await fetch(
-				`http://localhost:5000/api/clients/${client._id}`,
-				{ method: "DELETE" },
-			);
-			if (!response.ok) throw new Error("Unable to delete this client.");
+			await deleteClientMutation.mutateAsync(client._id);
 			setDeletedIds((ids) => [...ids, client._id]);
 		} catch (requestError) {
 			setActionError(requestError.message);
