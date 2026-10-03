@@ -26,6 +26,7 @@ export default function CEOSidebar() {
 			workspaceLabel="CEO workspace"
 			userLabel="Mr. CEO"
 			userRole="CEO"
+			mobileScrollable
 		>
 			{(onNavigate) => (
 				<>

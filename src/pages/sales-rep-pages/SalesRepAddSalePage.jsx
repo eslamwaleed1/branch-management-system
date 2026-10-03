@@ -13,7 +13,7 @@ export default function SalesRepAddSalePage({ employeeId }) {
 	return (
 		<div className="flex min-h-dvh bg-[#F5F7F9]">
 			<SalesRepSidebar employeeId={employeeId} />
-			<main className="min-h-dvh w-full overflow-y-auto bg-[#F5F7F9] px-5 py-8 sm:px-8">
+			<main className="w-full bg-[#F5F7F9] px-5 py-8 sm:px-8">
 				<header className="mb-8 flex items-center justify-between gap-4">
 					<div>
 						<h1 className="text-3xl font-semibold tracking-tight text-gray-900">
@@ -24,7 +24,10 @@ export default function SalesRepAddSalePage({ employeeId }) {
 						</p>
 					</div>
 				</header>
-				<SaleForm employee={salesRep.name} targetPath={`/sales-rep/${salesRep._id}/sales`} />
+				<SaleForm
+					employee={salesRep.name}
+					targetPath={`/sales-rep/${salesRep._id}/sales`}
+				/>
 			</main>
 		</div>
 	);

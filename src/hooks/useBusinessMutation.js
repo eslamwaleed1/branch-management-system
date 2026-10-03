@@ -1,9 +1,5 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import {
-	createResource,
-	deleteResource,
-	updateResource,
-} from "../lib/api.js";
+import { createResource, deleteResource, updateResource } from "../lib/api.js";
 
 function useBusinessMutation(resource, mutationFn) {
 	const queryClient = useQueryClient();

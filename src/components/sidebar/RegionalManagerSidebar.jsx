@@ -22,6 +22,7 @@ export default function RegionalManagerSidebar({ branchId }) {
 			workspaceLabel="Regional Manager"
 			userLabel="Mr. Manager"
 			userRole="Regional Manager"
+			mobileScrollable
 		>
 			{(onNavigate) => (
 				<>

@@ -12,7 +12,7 @@ A responsive, role-oriented business dashboard for managing a company with multi
 - **Dashboard analytics:** select day, month, quarter, or year periods for sales/revenue comparisons and visual trends. Profit is currently estimated as 25% of revenue in the frontend, rather than read from a stored profit field.
 - **Usability:** light/dark theme toggle, route-level lazy loading, loading and error states, and layouts that adapt to narrow and wide screens. Tables and boards can scroll horizontally on smaller screens.
 
-The onboarding screen is a view-mode selector for exploring the role workspaces; it is not an authentication or authorization system.
+The onboarding screen is a view-mode selector for exploring the role workspaces. Email/password signup requires email verification, and Google OAuth returns to the frontend for a server-session check before onboarding. These account checks do not add server-side authorization to the role workspaces.
 
 ## Architecture and data flow
 

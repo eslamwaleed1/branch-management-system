@@ -4,10 +4,17 @@ import {
 	Route,
 	Navigate,
 	useParams,
+	useLocation,
 } from "react-router-dom";
-import { createElement, lazy, Suspense } from "react";
+import { createElement, lazy, Suspense, useEffect, useState } from "react";
 import { useBusinessData } from "./hooks/useBusinessData.js";
+import { authApi } from "./lib/api.js";
 
+const LoginPage = lazy(() => import("./pages/LoginPage.jsx"));
+const SignUpPage = lazy(() => import("./pages/SignUpPage.jsx"));
+const GoogleAuthCallbackPage = lazy(
+	() => import("./pages/GoogleAuthCallbackPage.jsx"),
+);
 const SelectViewModePage = lazy(() => import("./pages/SelectViewModePage.jsx"));
 
 // ---- CEO Pages ----
@@ -63,15 +70,99 @@ const SalesRepSalesPage = lazy(
 );
 // ---- Sales Rep Pages ----
 
+function AuthGate({ children }) {
+	const { pathname } = useLocation();
+	const [retryCount, setRetryCount] = useState(0);
+	const [authState, setAuthState] = useState({
+		status: "checking",
+		checkedPath: null,
+	});
+	const publicPaths = ["/", "/login", "/signup", "/auth/callback"];
+	const isPathPublic = publicPaths.includes(pathname);
+
+	useEffect(() => {
+		let current = true;
+		authApi
+			.session()
+			.then(() => {
+				if (current) {
+					setAuthState({ status: "authenticated", checkedPath: pathname });
+				}
+			})
+			.catch((error) => {
+				if (!current) return;
+				if (error.status === 401) {
+					setAuthState({ status: "unauthenticated", checkedPath: pathname });
+				} else {
+					setAuthState({
+						status: "error",
+						checkedPath: pathname,
+						message: "Couldn't verify your login. Check the connection and try again.",
+					});
+				}
+			});
+		return () => {
+			current = false;
+		};
+	}, [pathname, retryCount]);
+
+	if (
+		authState.status === "checking" ||
+		authState.checkedPath !== pathname
+	) {
+		return (
+			<main className="flex min-h-dvh items-center justify-center bg-slate-100 text-slate-700 dark:bg-slate-950 dark:text-slate-200">
+				<p role="status" className="text-sm font-medium">
+					Checking your session...
+				</p>
+			</main>
+		);
+	}
+
+	if (authState.status === "error") {
+		return (
+			<main className="flex min-h-dvh flex-col items-center justify-center gap-4 bg-slate-100 px-6 text-center text-slate-700 dark:bg-slate-950 dark:text-slate-200">
+				<p role="alert">{authState.message}</p>
+				<button
+					type="button"
+					onClick={() => setRetryCount((count) => count + 1)}
+					className="rounded-lg bg-blue-700 px-5 py-3 text-sm font-semibold text-white hover:bg-blue-800"
+				>
+					Try again
+				</button>
+			</main>
+		);
+	}
+
+	if (
+		authState.status === "authenticated" &&
+		isPathPublic &&
+		pathname !== "/auth/callback"
+	) {
+		return <Navigate to="/onboarding" replace />;
+	}
+	if (authState.status === "unauthenticated" && !isPathPublic) {
+		return <Navigate to="/login" replace />;
+	}
+	return children;
+}
+
 function App() {
 	return (
 		<BrowserRouter>
 			<Suspense fallback={<div>Loading page...</div>}>
-				<Routes>
+				<AuthGate>
+					<Routes>
 					{/* Redirections */}
-					<Route path="/" element={<Navigate to="/onboarding" replace />} />
+					<Route path="/" element={<Navigate to="/login" replace />} />
 					<Route path="/ceo" element={<Navigate to="/ceo/main" replace />} />
 
+					<Route path="/login" element={<LoginPage />} />
+					<Route path="/signup" element={<SignUpPage />} />
+					<Route
+						path="/auth/callback"
+						element={<GoogleAuthCallbackPage />}
+					/>
 					<Route path="/onboarding" element={<SelectViewModePage />} />
 
 					<Route path="/ceo/main" element={<CEOMainPage />} />
@@ -170,7 +261,8 @@ function App() {
 						path="/sales-rep/:employeeId/sales/new"
 						element={<SalesRepRoute component={SalesRepAddSalePage} />}
 					/>
-				</Routes>
+					</Routes>
+				</AuthGate>
 			</Suspense>
 		</BrowserRouter>
 	);
