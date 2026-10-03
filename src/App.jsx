@@ -116,6 +116,14 @@ function AuthGate({ children }) {
 		};
 	}, [currentArea, retryCount, shouldCheckSession]);
 
+	useEffect(() => {
+		const handleLogout = () => {
+			setAuthState({ status: "unauthenticated", checkedArea: "public" });
+		};
+		window.addEventListener("bms:logout", handleLogout);
+		return () => window.removeEventListener("bms:logout", handleLogout);
+	}, []);
+
 	if (authState.status === "error") {
 		return (
 			<main className="flex min-h-dvh flex-col items-center justify-center gap-4 bg-slate-100 px-6 text-center text-slate-700 dark:bg-slate-950 dark:text-slate-200">

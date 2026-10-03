@@ -25,6 +25,7 @@ export default function BaseSidebar({
 			const { csrfToken } = await authApi.csrfToken();
 			if (!csrfToken) throw new Error("Missing CSRF token");
 			await authApi.logout(csrfToken);
+			window.dispatchEvent(new Event("bms:logout"));
 			navigate("/login", { replace: true });
 		} catch (error) {
 			setLogoutError(error.message || "Unable to log out. Please try again.");
