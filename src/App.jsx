@@ -75,28 +75,38 @@ function AuthGate({ children }) {
 	const [retryCount, setRetryCount] = useState(0);
 	const [authState, setAuthState] = useState({
 		status: "checking",
-		checkedPath: null,
+		checkedArea: null,
 	});
 	const publicPaths = ["/", "/login", "/signup", "/auth/callback"];
 	const isPathPublic = publicPaths.includes(pathname);
+	const currentArea = isPathPublic ? "public" : "protected";
+	const shouldCheckSession =
+		authState.status === "checking" ||
+		authState.status === "error" ||
+		(authState.checkedArea !== currentArea &&
+			((authState.status === "authenticated" &&
+				isPathPublic &&
+				pathname !== "/auth/callback") ||
+				(authState.status === "unauthenticated" && !isPathPublic)));
 
 	useEffect(() => {
+		if (!shouldCheckSession) return;
 		let current = true;
 		authApi
 			.session()
 			.then(() => {
 				if (current) {
-					setAuthState({ status: "authenticated", checkedPath: pathname });
+					setAuthState({ status: "authenticated", checkedArea: currentArea });
 				}
 			})
 			.catch((error) => {
 				if (!current) return;
 				if (error.status === 401) {
-					setAuthState({ status: "unauthenticated", checkedPath: pathname });
+					setAuthState({ status: "unauthenticated", checkedArea: currentArea });
 				} else {
 					setAuthState({
 						status: "error",
-						checkedPath: pathname,
+						checkedArea: currentArea,
 						message: "Couldn't verify your login. Check the connection and try again.",
 					});
 				}
@@ -104,20 +114,7 @@ function AuthGate({ children }) {
 		return () => {
 			current = false;
 		};
-	}, [pathname, retryCount]);
-
-	if (
-		authState.status === "checking" ||
-		authState.checkedPath !== pathname
-	) {
-		return (
-			<main className="flex min-h-dvh items-center justify-center bg-slate-100 text-slate-700 dark:bg-slate-950 dark:text-slate-200">
-				<p role="status" className="text-sm font-medium">
-					Checking your session...
-				</p>
-			</main>
-		);
-	}
+	}, [currentArea, retryCount, shouldCheckSession]);
 
 	if (authState.status === "error") {
 		return (
@@ -130,6 +127,16 @@ function AuthGate({ children }) {
 				>
 					Try again
 				</button>
+			</main>
+		);
+	}
+
+	if (shouldCheckSession) {
+		return (
+			<main className="flex min-h-dvh items-center justify-center bg-slate-100 text-slate-700 dark:bg-slate-950 dark:text-slate-200">
+				<p role="status" className="text-sm font-medium">
+					Checking your session...
+				</p>
 			</main>
 		);
 	}
