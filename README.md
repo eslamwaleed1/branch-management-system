@@ -2,7 +2,7 @@
 
 A responsive, role-oriented business dashboard for managing a company with multiple branches. The React frontend reads and creates business records through an Express REST API hosted on Render; the backend connects to MongoDB Atlas for persistent storage.
 
-Business-record CRUD is being expanded; the frontend currently supports reading and creating records.
+All business entities support full CRUD operations: create, view, update, and delete records.
 
 ## Features
 
