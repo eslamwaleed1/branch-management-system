@@ -2,6 +2,8 @@
 
 A responsive, role-oriented business dashboard for managing a company with multiple branches. The React frontend reads and creates business records through an Express REST API hosted on Render; the backend connects to MongoDB Atlas for persistent storage.
 
+Business-record CRUD is being expanded; the frontend currently supports reading and creating records.
+
 ## Features
 
 - **CEO workspace:** company-wide and branch-specific dashboards, branch navigation, sales and revenue summaries, trend charts, recent transactions, and access to employees, clients, inventory, and sales.
