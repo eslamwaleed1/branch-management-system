@@ -109,7 +109,7 @@ export default function ProductForm({
 				{inventories.map((item, index) => (
 					<div
 						key={index}
-						className="rounded-lg border border-slate-200 bg-slate-50/70 p-4 sm:p-5"
+						className="rounded-lg border border-slate-200 bg-slate-50 p-4 sm:p-5"
 					>
 						<p className="mb-4 text-xs font-semibold uppercase text-slate-500">
 							Branch {index + 1}
