@@ -89,113 +89,198 @@ export default function SaleForm({ employee = "", targetPath = "/ceo/sales" }) {
 	return (
 		<form
 			onSubmit={handleSubmit}
-			className="flex flex-col items-center gap-[10px] pt-[2rem] w-[22rem]"
+			className="w-full max-w-5xl rounded-xl border border-slate-200 bg-white p-5 shadow-sm sm:p-8"
 		>
-			<select
-				className={inputClass}
-				value={employeeName}
-				required
-				disabled={employeesLoading}
-				onChange={(event) => setEmployeeName(event.target.value)}
-			>
-				<option value="">Select employee</option>
-				{employees.map(
-					(employee) =>
-						employee.position === "Sales Rep" && (
-							<option key={employee._id} value={employee.name}>
-								{employee.name}
-							</option>
-						),
-				)}
-			</select>
-			<select
-				className={inputClass}
-				value={clientName}
-				required
-				disabled={clientsLoading}
-				onChange={(event) => setClientName(event.target.value)}
-			>
-				<option value="">Select client</option>
-				{clients.map(
-					(client) =>
-						selectedEmployee && client.branch.name === selectedEmployee.branch.name && (
-							<option key={client._id} value={client.name}>
-								{client.name}
-							</option>
-						),
-				)}
-			</select>
-			{items.map((item, index) => (
-				<div key={index} className="flex w-full gap-[10px]">
+			<div className="mb-7 border-b border-slate-100 pb-5">
+				<h2 className="text-lg font-semibold text-slate-900">Sale details</h2>
+				<p className="mt-1 text-sm text-slate-500">
+					Select a sales representative and client, then add products.
+				</p>
+			</div>
+			<div className="grid grid-cols-1 gap-x-8 gap-y-6 md:grid-cols-2">
+				<FormField
+					id="sale-employee"
+					label="Sales representative"
+					example="Choose the employee handling this sale."
+				>
 					<select
+						id="sale-employee"
 						className={inputClass}
-						value={item.productName}
+						value={employeeName}
 						required
-						disabled={productsLoading || !selectedEmployee}
-						onChange={(event) =>
-							updateItem(index, "productName", event.target.value)
+						disabled={employeesLoading}
+						onChange={(event) => setEmployeeName(event.target.value)}
+					>
+						<option value="" disabled>
+							Select employee
+						</option>
+						{employees.map(
+							(employee) =>
+								employee.position === "Sales Rep" && (
+									<option key={employee._id} value={employee.name}>
+										{employee.name}
+									</option>
+								),
+						)}
+					</select>
+				</FormField>
+				<FormField
+					id="sale-client"
+					label="Client"
+					example="Clients are filtered to the selected employee's branch."
+				>
+					<select
+						id="sale-client"
+						className={inputClass}
+						value={clientName}
+						required
+						disabled={clientsLoading || !selectedEmployee}
+						onChange={(event) => setClientName(event.target.value)}
+					>
+						<option value="" disabled>
+							Select client
+						</option>
+						{clients.map(
+							(client) =>
+								selectedEmployee &&
+								client.branch.name === selectedEmployee.branch.name && (
+									<option key={client._id} value={client.name}>
+										{client.name}
+									</option>
+								),
+						)}
+					</select>
+				</FormField>
+			</div>
+			<div className="mt-8 space-y-4">
+				<div>
+					<h3 className="text-sm font-semibold text-slate-900">Products</h3>
+					<p className="mt-1 text-xs leading-5 text-slate-500">
+						Only products with available stock at the employee's branch are
+						shown.
+					</p>
+				</div>
+				{items.map((item, index) => (
+					<div
+						key={index}
+						className="rounded-lg border border-slate-200 bg-slate-50/70 p-4 sm:p-5"
+					>
+						<p className="mb-4 text-xs font-semibold uppercase text-slate-500">
+							Item {index + 1}
+						</p>
+						<div className="grid grid-cols-1 gap-x-6 gap-y-5 sm:grid-cols-[minmax(0,1fr)_10rem]">
+							<FormField
+								id={`sale-product-${index}`}
+								label="Product"
+								example="Choose an in-stock item."
+							>
+								<select
+									id={`sale-product-${index}`}
+									className={inputClass}
+									value={item.productName}
+									required
+									disabled={productsLoading || !selectedEmployee}
+									onChange={(event) =>
+										updateItem(index, "productName", event.target.value)
+									}
+								>
+									<option value="" disabled>
+										Select product
+									</option>
+									{sellableProducts.map((product) => (
+										<option
+											key={product._id}
+											value={product.name}
+											disabled={items.some(
+												(otherItem, otherIndex) =>
+													otherIndex !== index &&
+													otherItem.productName === product.name,
+											)}
+										>
+											{product.name}
+										</option>
+									))}
+								</select>
+							</FormField>
+							<FormField
+								id={`sale-quantity-${index}`}
+								label="Quantity"
+								example={
+									item.productName
+										? `Up to ${stockFor(item.productName)} available.`
+										: "Select a product first."
+								}
+							>
+								<input
+									id={`sale-quantity-${index}`}
+									className={inputClass}
+									type="number"
+									min="1"
+									max={
+										item.productName ? stockFor(item.productName) : undefined
+									}
+									placeholder="1"
+									value={item.quantity}
+									required
+									disabled={!item.productName}
+									onChange={(event) =>
+										updateItem(index, "quantity", event.target.value)
+									}
+								/>
+							</FormField>
+						</div>
+					</div>
+				))}
+				<div className="flex flex-wrap gap-3">
+					<button
+						type="button"
+						className="inline-flex min-h-11 items-center justify-center rounded-lg border border-blue-200 px-4 py-2 text-sm font-semibold text-blue-700 transition hover:bg-blue-50 disabled:cursor-not-allowed disabled:opacity-50"
+						disabled={
+							!selectedEmployee ||
+							items.length >= sellableProducts.length ||
+							productsLoading
+						}
+						onClick={() =>
+							setItems([...items, { productName: "", quantity: 1 }])
 						}
 					>
-						<option value="">Select product</option>
-						{sellableProducts.map((product) => (
-							<option
-								key={product._id}
-								value={product.name}
-								disabled={items.some(
-									(otherItem, otherIndex) =>
-										otherIndex !== index &&
-										otherItem.productName === product.name,
-								)}
-							>
-								{product.name}
-							</option>
-						))}
-					</select>
-					<input
-						className={`${inputClass} w-20`}
-						type="number"
-						min="1"
-						max={item.productName ? stockFor(item.productName) : undefined}
-						value={item.quantity}
-						required
-						disabled={!item.productName}
-						onChange={(event) =>
-							updateItem(index, "quantity", event.target.value)
-						}
-					/>
+						+ Add product
+					</button>
+					<button
+						type="button"
+						className="inline-flex min-h-11 items-center justify-center rounded-lg border border-slate-200 px-4 py-2 text-sm font-semibold text-slate-700 transition hover:bg-slate-100"
+						onClick={() => setItems((prevState) => prevState.slice(0, -1))}
+					>
+						Remove last product
+					</button>
 				</div>
-			))}
-			<button
-				type="button"
-				className="btn-base border border-blue-300 px-3 py-1 cursor-pointer"
-				disabled={
-					!selectedEmployee ||
-					items.length >= sellableProducts.length ||
-					productsLoading
-				}
-				onClick={() => setItems([...items, { productName: "", quantity: 1 }])}
-			>
-				+ Add product
-			</button>
-			<button
-				type="button"
-				className="btn-base border border-blue-300 px-3 py-1 cursor-pointer"
-				onClick={() => setItems((prevState) => prevState.slice(0, -1))}
-			>
-				- Add product
-			</button>
-			<button
-				type="submit"
-				className="btn-base input-submit bg-blue-500 text-white hover:bg-blue-600 transition-colors duration-200 cursor-pointer"
-			>
-				Add Sale
-			</button>
+			</div>
+			<div className="mt-8 flex justify-end border-t border-slate-100 pt-6">
+				<button
+					type="submit"
+					className="inline-flex min-h-11 w-full items-center justify-center rounded-lg bg-blue-600 px-6 py-3 text-sm font-semibold text-white transition hover:bg-blue-700 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-blue-200 sm:w-auto"
+				>
+					Add Sale
+				</button>
+			</div>
 		</form>
 	);
 }
 
 const inputClass =
-	"btn-base input-field border border-blue-300 focus:ring-blue-300";
+	"w-full rounded-lg border border-slate-200 bg-white px-3.5 py-3 text-sm text-slate-900 outline-none transition placeholder:text-slate-400 focus:border-blue-500 focus:ring-4 focus:ring-blue-100 disabled:bg-slate-100";
+
+function FormField({ id, label, example, children }) {
+	return (
+		<div className="space-y-2">
+			<label htmlFor={id} className="block text-sm font-medium text-slate-800">
+				{label}
+			</label>
+			{children}
+			<p className="text-xs leading-5 text-slate-500">{example}</p>
+		</div>
+	);
+}
 
 const inventoryEntries = (product) =>
 	product.branchInventories ||
